@@ -2,59 +2,17 @@
 import Button from "../shared/Button.astro";
 import Container from "../shared/Container.astro";
 import Paragraph from "../shared/Paragraph.astro";
-
-interface Video {
-    mp4: string;
-    webm: string;
-    poster: string;
-    width: number;
-    height: number;
-}
-
-const firstFrameImage = "/images/video1-first-frame.webp";
-const videos: Video[] = [
-    {
-        mp4: "/videos/video1.mp4",
-        webm: "/videos/video1.webm",
-        poster: firstFrameImage,
-        width: 380,
-        height: 760
-    },
-    {
-        mp4: "/videos/video2.mp4",
-        webm: "/videos/video2.webm",
-        poster: firstFrameImage,
-        width: 380,
-        height: 760
-    },
-    {
-        mp4: "/videos/video3.mp4",
-        webm: "/videos/video3.webm",
-        poster: firstFrameImage,
-        width: 380,
-        height: 760
-    },
-    {
-        mp4: "/videos/video4.mp4",
-        webm: "/videos/video4.webm",
-        poster: firstFrameImage,
-        width: 380,
-        height: 760
-    }
-];
 ---
 
-<section id="hero" class="relative pt-1 lg:pt-36">
+<section id="hero" class="relative pt-8 md:pt-12 lg:pt-16">
     <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <span class="w-4/12 lg:w-2/12 aspect-square bg-gradient-to-tr from-primary to-green-400 absolute -top-5 lg:left-0 rounded-full skew-y-12 blur-2xl opacity-40 skew-x-12 rotate-90"></span>
         <span class="absolute -left-6 md:left-4 top-24 lg:top-28 w-24 h-24 rotate-90 skew-x-12 rounded-3xl bg-green-400 blur-xl opacity-60 lg:opacity-95 lg:block hidden"></span>
         <span class="absolute right-4 bottom-12 w-24 h-24 rounded-3xl bg-primary blur-xl opacity-80"></span>
     </div>
 
-    <Container className={"flex flex-col lg:flex-row gap-10 lg:gap-12"}>
-        <div class="relative flex flex-col items-center text-center lg:text-left lg:py-7 xl:py-8 
-        lg:items-start lg:max-w-none max-w-3xl mx-auto lg:mx-0 lg:flex-1 lg:w-1/2">
-            
+    <Container>
+        <div class="flex flex-col items-center text-center max-w-2xl mx-auto">
             <h1 class="hero-title">
                 <span class="hero-text">We Transform</span>
                 <span class="hero-text">Influencers</span>
@@ -63,11 +21,11 @@ const videos: Video[] = [
                 <span class="hero-text">to Scale Your Brand</span>
             </h1>
             
-            <Paragraph className="mt-8">
+            <Paragraph className="mt-4 md:mt-6">
                 We drive exponential revenue growth for your brand through influencer affiliate marketing and social referrals.
             </Paragraph>
-            <div class="mt-10 flex justify-center lg:justify-start w-full">
-                <div class="flex sm:flex-row flex-col gap-5">
+            <div class="mt-6 md:mt-8">
+                <div class="flex sm:flex-row flex-col gap-4">
                     <a href="#calendly-section">
                         <Button variant={"primary"} className={"min-w-max text-white"}>
                             <span class="flex relative z-[5]">
@@ -78,103 +36,12 @@ const videos: Video[] = [
                 </div>
             </div>
         </div>
-
-        <div class="flex flex-1 lg:w-1/2 lg:h-auto relative lg:max-w-none lg:mx-0 mx-auto max-w-3xl">
-            <div class="phone-frame">
-                <div class="video-container">
-                    {videos.map((video, index) => (
-                        <video 
-                            class="phone-video"
-                            muted 
-                            playsinline
-                            webkit-playsinline="true"
-                            x-webkit-airplay="deny"
-                            preload={index === 0 ? "auto" : "none"}
-                            data-index={index}
-                            poster={video.poster}
-                            width={video.width}
-                            height={video.height}
-                            aria-label={`Promotional video ${index + 1}`}
-                            style={index === 0 ? "opacity: 1; transform: translateY(0);" : ""}
-                        >
-                            <source 
-                                src={video.webm} 
-                                type="video/webm"
-                            />
-                            <source 
-                                src={video.mp4} 
-                                type="video/mp4"
-                            />
-                        </video>
-                    ))}
-                </div>
-            </div>
-        </div>
     </Container>
 </section>
 
 <style>
-    .phone-frame {
-        position: relative;
-        width: 300px;
-        height: 600px;
-        margin: 0 auto;
-        border-radius: 40px;
-        background: var(--phone-frame-color);
-        padding: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        border: 8px solid var(--phone-frame-color);
-        overflow: hidden;
-        contain: content;
-    }
-
-    .phone-frame::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 150px;
-        height: 25px;
-        background: var(--phone-frame-color);
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
-        z-index: 2;
-    }
-
-    .video-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        border-radius: 30px;
-        overflow: hidden;
-        contain: content;
-    }
-
-    .phone-video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transform: translateY(100%);
-        will-change: transform, opacity;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        transition: transform 1s ease-out, opacity 0.2s ease-out;
-    }
-
-    @media (min-width: 1024px) {
-        .phone-frame {
-            width: 380px;
-            height: 760px;
-        }
-    }
-
     .hero-title {
-        font-size: clamp(2rem, 5vw, 3.75rem);
+        font-size: clamp(1.75rem, 4vw, 3.25rem);
         line-height: 1.1;
         font-weight: 700;
         display: flex;
@@ -183,13 +50,7 @@ const videos: Video[] = [
         text-align: center;
         contain: content;
         will-change: transform;
-    }
-
-    @media (min-width: 1024px) {
-        .hero-title {
-            align-items: flex-start;
-            text-align: left;
-        }
+        margin-bottom: 0.5rem;
     }
 
     .hero-text {
@@ -226,15 +87,9 @@ const videos: Video[] = [
 
     :root {
         --text-heading: #1a1a1a;
-        --phone-frame-color: rgba(241, 245, 249, 0.8);
     }
 
     :root.dark {
         --text-heading: #ffffff;
-        --phone-frame-color: #12223b6e;
     }
 </style>
-
-<script>
-    import '../../scripts/heroVideo.ts';
-</script>

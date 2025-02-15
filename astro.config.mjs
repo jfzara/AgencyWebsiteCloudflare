@@ -1,9 +1,10 @@
 import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import cloudflare from '@astrojs/cloudflare';
+import react from '@astrojs/react';
 
 export default defineConfig({
-  integrations: [tailwind()],
+  integrations: [tailwind(), react()],
   output: 'server',
   adapter: cloudflare(),
   compressHTML: true,
@@ -11,6 +12,9 @@ export default defineConfig({
     inlineStylesheets: 'auto'
   },
   vite: {
+    ssr: {
+      noExternal: ['lucide-react']
+    },
     build: {
       cssCodeSplit: true,
       minify: 'terser',
