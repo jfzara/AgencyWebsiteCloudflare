@@ -235,14 +235,14 @@ export default function CustomerStories() {
                     <div className={`p-8 rounded-xl bg-white border-3 ${story.borderColor}`}>
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-medium text-gray-800">
-                          <span className={`inline-block rounded-lg ${story.highlightColor} px-3 py-1`}>
-                            What do they think of us?
-                          </span>
+                          What do they think of us?
                         </h3>
                         <Star className="w-6 h-6 text-gray-800" />
                       </div>
                       <blockquote className="text-lg text-gray-600 mb-6">
-                        "{story.quote.text}"
+                        <span className={`inline-block rounded-lg ${story.highlightColor} px-3 py-1`}>
+                          "{story.quote.text}"
+                        </span>
                       </blockquote>
                       <div>
                         <div className="font-medium text-gray-800">
