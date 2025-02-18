@@ -1,121 +1,66 @@
 class VideoPlayer {
-    private videos: HTMLVideoElement[];
-    private currentIndex: number;
-    private isTransitioning: boolean;
-    private readonly TRANSITION_DURATION = 1000;
+    private video: HTMLVideoElement | null;
 
     constructor() {
-        this.videos = Array.from(document.querySelectorAll('.phone-video'));
-        this.currentIndex = 0;
-        this.isTransitioning = false;
+        this.video = document.querySelector('.phone-video');
         this.init();
     }
 
     private init(): void {
-        if (this.videos.length === 0) return;
+        if (!this.video) return;
 
-        this.setupVideos();
-        this.preloadAllVideos();
-        void this.playFirstVideo();
+        // Configuration optimisée pour iOS
+        this.setupVideo();
+        void this.playVideo();
     }
 
-    private setupVideos(): void {
-        this.videos.forEach((video, index) => {
-            video.loop = false;
-            video.preload = 'auto';
-            video.muted = true;
-            video.playsInline = true;
-            
-            if (index === 0) {
-                video.style.opacity = '1';
-                video.style.transform = 'translateY(0)';
-            } else {
-                video.style.transform = 'translateY(100%)';
-                video.style.opacity = '0';
-            }
+    private setupVideo(): void {
+        if (!this.video) return;
 
-            // Ajouter un écouteur pour la fin de chaque vidéo
-            video.addEventListener('timeupdate', () => {
-                // Déclencher la transition juste avant la fin de la vidéo.
-                if (video.currentTime >= video.duration - 0.1 && !this.isTransitioning) {
-                    void this.switchVideo();
-                }
-            });
-        });
+        // Paramètres essentiels pour iOS
+        this.video.playsInline = true;
+        this.video.muted = true;
+        this.video.loop = true; // Activer la lecture en boucle
+        this.video.preload = 'auto';
+        this.video.setAttribute('playsinline', ''); // Double assurance pour iOS
+        this.video.setAttribute('webkit-playsinline', ''); // Support Safari
+        
+        // Style initial
+        this.video.style.opacity = '1';
+        this.video.style.transform = 'translateY(0)';
     }
 
-    private preloadAllVideos(): void {
-        this.videos.forEach(video => {
-            video.load();
-        });
-    }
+    private async playVideo(): Promise<void> {
+        if (!this.video) return;
 
-    private async playFirstVideo(): Promise<void> {
-        const firstVideo = this.videos[0];
         try {
-            await firstVideo.play();
+            // Tentative de lecture initiale
+            await this.video.play();
         } catch (error) {
-            console.error('Initial playback failed:', error);
+            console.log('Playback nécessite une interaction utilisateur:', error);
+            
+            // Gestionnaire pour le démarrage après interaction utilisateur
             const playOnInteraction = async (): Promise<void> => {
+                if (!this.video) return;
+                
                 try {
-                    await firstVideo.play();
+                    await this.video.play();
+                    // Nettoyage des écouteurs après succès
                     document.removeEventListener('touchstart', playOnInteraction);
                     document.removeEventListener('click', playOnInteraction);
                 } catch (e) {
-                    console.error('Playback failed after interaction:', e);
+                    console.log('Échec de lecture après interaction:', e);
                 }
             };
-            document.addEventListener('touchstart', playOnInteraction);
-            document.addEventListener('click', playOnInteraction);
-        }
-    }
 
-    private async switchVideo(): Promise<void> {
-        if (this.isTransitioning) return;
-        this.isTransitioning = true;
-
-        const currentVideo = this.videos[this.currentIndex];
-        const nextIndex = (this.currentIndex + 1) % this.videos.length;
-        const nextVideo = this.videos[nextIndex];
-
-        try {
-            // Prépare la prochaine vidéo
-            nextVideo.currentTime = 0;
-            nextVideo.style.transition = 'none';
-            nextVideo.style.transform = 'translateY(100%)';
-            nextVideo.style.opacity = '1';
-
-            // Démarre la lecture de la prochaine vidéo
-            await nextVideo.play();
-
-            // Applique la transition
-            requestAnimationFrame(() => {
-                currentVideo.style.transition = `transform ${this.TRANSITION_DURATION}ms ease-out`;
-                nextVideo.style.transition = `transform ${this.TRANSITION_DURATION}ms ease-out`;
-                
-                currentVideo.style.transform = 'translateY(-100%)';
-                nextVideo.style.transform = 'translateY(0)';
-            });
-
-            // Met à jour l'index
-            this.currentIndex = nextIndex;
-
-            // Nettoie après la transition
-            setTimeout(() => {
-                currentVideo.style.opacity = '0';
-                currentVideo.style.transform = 'translateY(100%)';
-                currentVideo.style.transition = 'none';
-                this.isTransitioning = false;
-            }, this.TRANSITION_DURATION);
-
-        } catch (error) {
-            console.error('Video transition failed:', error);
-            this.isTransitioning = false;
+            // Ajout des écouteurs pour l'interaction utilisateur
+            document.addEventListener('touchstart', playOnInteraction, { once: true });
+            document.addEventListener('click', playOnInteraction, { once: true });
         }
     }
 }
 
-// Initialise le lecteur vidéo quand le DOM est prêt
+// Initialisation sécurisée
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => new VideoPlayer());
 } else {
